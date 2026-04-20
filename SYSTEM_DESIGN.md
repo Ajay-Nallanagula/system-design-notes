@@ -41,7 +41,7 @@
 - Microservices - Domain-driven design (DDD), service discovery, API gateways
 - Monolithic - Layered architecture, MVC, MVP
 - Event-driven - Event sourcing, CQRS
-- Microkernel
+- Microkernel or Plug-in Architecture
 - DDD - Domain-Driven Design
 - Serverless - FaaS, BaaS (Backend-as-a-Service)
 
