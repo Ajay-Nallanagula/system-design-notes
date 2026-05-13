@@ -6,11 +6,10 @@ Networking System Design Notes
 - [CDNs - Content Delivery Networks (caching, edge servers)](#content-delivery-networks)
 - [Proxies - Forward, reverse, transparent, anonymous](#proxies)
 - [Gateways - Connect different networks](#gateways)
-
-- VPNs - Virtual Private Networks (tunneling protocols) : https://youtu.be/R-JUOpCgTZc?si=2-4F9EnKRe71Gwsm
-- Firewalls - Packet filtering, stateful inspection
-- NAT - Network Address Translation
-- Routers - Direct traffic between networks
+- [VPNs - Virtual Private Networks (tunneling protocols)](#vpns)
+- [Firewalls - Packet filtering, stateful inspection](#firewalls)
+- [NAT - Network Address Translation](#nat)
+- [Routers - Direct traffic between networks](#routers)
 
 ### Latency and Throughput
 
@@ -330,4 +329,149 @@ Networking System Design Notes
 
 ### Proxies
 
+- [Proxy](https://www.youtube.com/watch?v=RXXRguaHZs0)
+- What is a proxy server and why is it used?
+  - A `proxy server` acts as an intermediary between clients and servers. It receives requests from clients, forwards them to the appropriate servers, and then returns the responses back to the clients. Proxies are used for various purposes, including improving security, controlling access, caching content, and anonymizing user activity.
+
+  - Why Should we use a Proxy Server?
+    - `Security`: Proxies can filter out `malicious traffic`, block access to harmful websites(`blacklist/whitelist`), and protect internal networks from external threats.
+    - `Access Control`: Proxies can restrict access to certain websites or services based on policies, user roles, or time of day.
+    - `Caching`: Proxies can cache frequently accessed content, reducing latency and improving performance for users.
+    - `Anonymity`: Proxies can hide the client's IP address, providing anonymity and privacy when browsing the internet.
+  - `Content Filtering`: Proxies can block or modify content based on rules, such as removing ads or blocking inappropriate material.
+    - `Load Balancing`: Proxies can distribute incoming requests across multiple servers to improve performance and reliability.
+    - `Logging and Monitoring`: Proxies can log user activity and monitor traffic for analysis and troubleshooting.
+
+  - Types of Proxies:
+    - `Forward Proxy`: "Client sends the request" Sits between clients and the internet, forwarding requests on behalf of clients. Used for anonymity and access control.
+      - `Use Cases:`
+        - Client-side anonymity (server doesn't know the real client IP)
+        - Content filtering and monitoring
+        - Caching for faster access
+        - Bypassing geographic restrictions
+        - `Example`: Your company proxy that filters web traffic.
+      - `Visibility`: Server sees proxy IP, not client IP.
+    - `Reverse Proxy`: "server sends the response" Sits in front of servers, forwarding requests to backend servers. Used for load balancing, security, and caching.
+      - `Use Cases:`
+        - Load balancing across multiple backend servers
+        - SSL/TLS termination
+        - Caching static content
+        - API gateway functionality
+        - `Example`: NGINX, HAProxy, AWS Load Balancer
+      - `Visibility`: Client sees only proxy IP, actual backend server is hidden.
+
+    - `Transparent Proxy`: Intercepts traffic without modifying requests or responses. Often used for caching and content filtering.
+    - `Network Level`: Operates at network/ISP level
+      - `Use Cases:`
+        - ISP traffic management
+        - Network monitoring and filtering
+        - Bandwidth throttling
+        - Content filtering without client awareness
+        - `Example`: ISP proxies that intercept HTTP traffic
+        - `Characteristic`: Client doesn't know they're using a proxy (no manual proxy configuration needed)
+
+    - `Anonymous Proxy`: Hides the client's IP address but identifies itself as a proxy. Used for privacy.
+      `How it works:` Removes identifying headers (X-Forwarded-For, etc.)
+      - `Use Cases:`
+        - Privacy protection
+        - Preventing tracking
+        - Web scraping without detection
+
+- Proxy Vs Load Balancer:
+  - `Proxy Server`: Primarily used for security, access control, caching, and anonymity. It can be a forward or reverse proxy depending on its position in the network.
+  - `Load Balancer`: Specifically designed to distribute incoming traffic across multiple servers to improve performance and reliability. It can operate at Layer 4 (transport) or Layer 7 (application) of the OSI model. Load Balanceris also a type of reverse proxy, but not all reverse proxies are load balancers. Reverse proxies can also provide additional features like SSL termination and caching, while load balancers focus on traffic distribution.
+
 ### Gateways
+
+- [Gateway](https://www.youtube.com/watch?v=pCcJFdYNamc)
+- What is a gateway and why is it used?
+  - A `gateway` is a network device that connects two different networks, often with different protocols or architectures. It acts as a translator, allowing communication between networks that would otherwise be incompatible. Gateways are used to enable communication between different systems, such as connecting a local network to the internet or bridging different types of networks (e.g., Ethernet to Wi-Fi, router).
+
+- Types of Gateways:
+  - `Protocol Gateway`: Translates between different communication protocols (e.g., HTTP to MQTT).
+  - `Network Gateway`: Connects different network architectures (e.g., IPv4 to IPv6).
+  - `Application Gateway`: Provides application-level translation and routing (e.g., API gateway).
+  - `Cloud Gateway`: Connects on-premises networks to cloud services (e.g., AWS Direct Connect).
+
+### API Gateway Vs Reverse Proxy Vs Load Balancer:
+
+| Aspect                    | API Gateway                                                           | Reverse Proxy                                  | Load Balancer                                  |
+| ------------------------- | --------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| **Primary Purpose**       | API management, authentication, rate limiting, request transformation | Caching, security, request forwarding          | Distributing traffic across servers            |
+| **Layer**                 | Application Layer (L7)                                                | Application Layer (L7)                         | Transport Layer (L4) or Application Layer (L7) |
+| **Protocol Handling**     | HTTP/REST, GraphQL, gRPC, WebSocket                                   | HTTP/HTTPS primarily                           | TCP/UDP (L4) or HTTP/HTTPS (L7)                |
+| **Request Routing**       | Based on API version, method, path, headers                           | Based on URL patterns, domain, path            | Based on server health, capacity, algorithms   |
+| **Key Features**          | Authentication, authorization, rate limiting, API versioning          | SSL termination, caching, compression, logging | Health checks, session persistence, failover   |
+| **Response Modification** | Can transform request/response payloads                               | Limited transformation capabilities            | Minimal response modification                  |
+| **Use Case Example**      | Managing microservices, OAuth 2.0, providing unified interface        | Protecting backend servers, SSL termination    | Distributing user traffic across servers       |
+| **Scalability Approach**  | Horizontal (multiple gateway instances)                               | Horizontal (multiple proxy instances)          | Horizontal (multiple LB instances)             |
+| **Security Features**     | API key validation, JWT verification, DDoS protection                 | SSL/TLS encryption, IP filtering, WAF          | Connection-level filtering, traffic shaping    |
+| **Complexity**            | High (business logic)                                                 | Medium (protocol-level)                        | Low to Medium (traffic distribution)           |
+| **Common Tools**          | Kong, AWS API Gateway, Azure API Management                           | Nginx, HAProxy, Apache                         | HAProxy, Nginx, AWS ELB, F5                    |
+| **Typical Position**      | Entry point for client requests → APIs                                | Between clients and backend services           | Between clients and web servers                |
+
+### VPNs
+
+- [VPNS](https://youtu.be/R-JUOpCgTZc?si=2-4F9EnKRe71Gwsm)
+- What is a VPN and why is it used?
+  - A `Virtual Private Network (VPN)` is a technology that creates a secure and encrypted connection over a less secure network, such as the internet. It allows users to send and receive data as if their devices were directly connected to a private network, providing privacy, security, and access to restricted content.
+
+  - All your internet is routed through ISP provider's network. He can sell your data to advertisers, track your browsing history, and even inject ads into your traffic. A VPN encrypts your internet traffic and routes it through a secure server, hiding your IP address and making it difficult for anyone to monitor your online activities.
+
+  - `Use Cases for VPNs`:
+    - `Privacy and Anonymity`: VPNs hide your IP address and encrypt your internet traffic, making it difficult for third parties to track your online activities.
+    - `Secure Remote Access`: VPNs allow employees to securely connect to their company's internal network from remote locations, ensuring data security and access control.
+    - `Bypass Geo-Restrictions`: VPNs enable users to access content that may be restricted in their geographic location by routing traffic through servers in different regions.
+    - `Secure Public Wi-Fi Usage`: VPNs protect users from potential threats when using public Wi-Fi networks by encrypting their internet traffic.
+
+### Firewalls
+
+- [Firewalls](https://www.youtube.com/watch?v=kDEX1HXybrU)
+
+- What is a firewall and why is it used?
+  - A `firewall` is a network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules(`ACL- Access control rules`). It acts as a barrier between a trusted internal network and untrusted external networks, such as the internet, to prevent unauthorized access and protect against cyber threats.
+
+  Types of firewalls:
+  - `Host-based Firewall`: Installed on individual devices (e.g., Windows Defender Firewall) to protect that specific device. This just a software.
+  - `Network-based Firewall`: Deployed at the network perimeter (e.g., Cisco ASA, Palo Alto) to protect the entire network.
+    Software + Hardware. Few of the routers have inbuilt firewall capabilities. But dedicated network firewalls are more powerful and feature-rich.
+  - `Application Firewall`: Focuses on monitoring and filtering traffic for specific applications (e.g., web application firewall like ModSecurity).
+
+  - `OPTIONAL` - `Application Layer Firewall`: Inspects traffic at the application layer (Layer 7) to provide more granular control over specific applications and protocols. - `Packet Filtering Firewall`: Inspects packets at the network layer and allows or blocks them based on source/destination IP addresses, ports, and protocols. - `Stateful Inspection Firewall`: Tracks the state of active connections and makes decisions based on the context of the traffic, providing more security than packet filtering. - `Proxy Firewall`: Acts as an intermediary for requests from clients seeking resources from other servers, providing additional security by hiding the client's IP address. - `Next-Generation Firewall (NGFW)`: Combines traditional firewall capabilities with advanced features like intrusion prevention, application awareness, and deep packet inspection.
+
+  - `Use Cases for Firewalls`:
+    - `Network Security`: Firewalls protect internal networks from unauthorized access and cyber attacks by filtering traffic based on IP addresses, ports, and protocols.
+    - `Access Control`: Firewalls can restrict access to specific websites, applications, or services based on organizational policies.
+    - `Intrusion Prevention`: Firewalls can detect and block malicious traffic, such as malware, ransomware, and DDoS attacks.
+    - `Monitoring and Logging`: Firewalls provide visibility into network traffic and can log events for analysis and troubleshooting.
+
+    - What is Access Control List (ACL)?
+      - An `Access Control List (ACL)` is a set of rules that a firewall uses to determine whether to allow or block network traffic. Each rule specifies criteria such as source/destination IP addresses, ports, and protocols. The firewall evaluates incoming and outgoing traffic against the ACL rules to enforce security policies.
+
+### NAT
+
+- [NAT: Network Address Translation](https://www.youtube.com/watch?v=FTUV0t6JaDA)
+- Most of the internet uses IPV4 address, which has a limited number of unique addresses (about 4.3 billion). With the explosion of internet-connected devices, we quickly ran out of available IPv4 addresses. NAT was developed as a solution to this problem, allowing multiple devices on a local network to share a single public IP address when accessing the internet.
+  So, NAT converts Public IP to Private IP and vice versa. It allows multiple devices on a local network to share a single public IP address when accessing the internet.
+
+- What is NAT?
+  - `Network Address Translation (NAT)` is a method used in networking to modify network address information in the IP header of packets while they are in transit across a traffic routing device. This technique is commonly used to improve security and decrease the number of IP addresses an organization needs.
+
+- Now that we have IPV6 (in future) we will have 340 undecillion unique IP addresses, do we still need NAT?
+  - We might not need.
+  - Even with IPv6, NAT may still be used for certain purposes, such as network segmentation, security, and to maintain compatibility with legacy systems. However, the need for NAT will significantly decrease as IPv6 adoption increases.
+
+### Routers
+
+- [Routers](https://www.youtube.com/watch?v=CGmTvukObOw)
+
+- What are routers?
+  - A `router` is a networking device that forwards data packets between computer networks. It connects multiple networks together and directs traffic based on the destination IP address of the packets. Routers operate at the network layer (Layer 3) of the OSI model and use routing tables to determine the best path for forwarding packets.
+
+  - What are Routing Tables?
+    - A `routing table` is a data structure stored in a router that contains information about the paths to various network destinations. It includes entries for different IP address ranges, along with the corresponding next-hop addresses and metrics (such as hop count or latency) that help the router determine the best path for forwarding packets.
+
+    - There are three types of routes
+    - Direct: Routes that are directly connected to the router's interfaces.
+    - Static: Manually configured routes that do not change unless modified by an administrator.
+    - Dynamic: Routes that are automatically learned and updated by routing protocols, allowing the network to adapt to changes in topology.
