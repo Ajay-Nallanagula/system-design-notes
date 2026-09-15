@@ -38,7 +38,11 @@
 📌 𝐂𝐨𝐦𝐦𝐮𝐧𝐢𝐜𝐚𝐭𝐢𝐨𝐧
 
 - APIs - REST, GraphQL, SOAP, gRPC
-- Message Queues - RabbitMQ, Kafka, ActiveMQ, Amazon SQS
+- Message Queues - RabbitMQ, Kafka, ActiveMQ, Amazon SQS,
+  Refs: 
+    -  https://youtu.be/1ISRd0bS714?si=gxjVYmVBVSatpA5H
+    -  https://youtu.be/DU8o-OTeoCc?si=WM_9TbqJihnSX4dk
+    -  https://youtu.be/1HOVtQ-_fcE?si=Bp4eQ4ZmSgsXUmiy
 - WebSockets - Real-time, full-duplex communication
 - RPC - Remote Procedure Call, XML-RPC, JSON-RPC
 - Pub/Sub - Publish-subscribe messaging pattern
@@ -134,7 +138,7 @@
 - Long Polling vs WebSockets: https://lnkd.in/d9xKD28K
 -
 - Concurrency vs Parallelism: https://lnkd.in/gGZXhjBD
--
+
 - Proxy vs Reverse Proxy: https://lnkd.in/gMTtidBq
--
+
 - Batch vs Stream Processing: https://lnkd.in/gKtj_qWh
